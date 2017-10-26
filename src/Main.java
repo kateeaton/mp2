@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Parser s = new Parser();
         ArrayList<String> list = s.Parse("input55.txt");
-        ArrayList<ArrayList<CSP>> assignment = new ArrayList<ArrayList<CSP>>;
+        ArrayList<ArrayList<CSP>> assignment = new ArrayList();
         assignment = s.getCSP(list, 5);
 
 //        ArrayList<String> list0 = s.Parse("mediumMaze.txt");

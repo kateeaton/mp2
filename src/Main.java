@@ -8,7 +8,19 @@ public class Main {
         ArrayList<String> list = s.Parse("input55.txt");
         ArrayList<ArrayList<CSP>> assignment = new ArrayList();
         assignment = s.getCSP(list, 5);
-
+        CSP current = assignment.get(0).get(0);
+        Flow m = new Flow();
+        assignment = m.BackTracking(assignment, 5, current);
+        Character bleh;
+        System.out.println();
+        System.out.println();
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 5; j++){
+               bleh = assignment.get(i).get(j).getValue();
+               System.out.print(bleh);
+            }
+            System.out.println();
+        }
 //        ArrayList<String> list0 = s.Parse("mediumMaze.txt");
 //        ArrayList<String> list1 = s.Parse("mediumMaze.txt");
 //        ArrayList<String> list2 = s.Parse("mediumMaze.txt");

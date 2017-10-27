@@ -2,35 +2,43 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Flow {
-    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size){
+    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, CSP current){
         if(complete(assignment)){
             return assignment;
         }
         else{
-//            Stack<CSP> frontier = new Stack<>();
-            CSP current = selectVariable(assignment);
+            //CSP current = selectVariable(assignment);
+            Integer x = current.x;
+            Integer y = current.y;
             for(Character value : current.getDomain()){
+                if(isValid(value, current, assignment, size)) {
+                    ArrayList<CSP> mod = assignment.get(x);
+                    CSP update = current;
+                    update.setValue(value);
+                    mod.set(y, update);
+                    assignment.set(x, mod);
+                    ArrayList<ArrayList<CSP>> newAssignment;
+                    CSP newCurrent = current;
+                    if(y-1 >= 0){
+                        newCurrent = assignment.get(x).get(y-1);
+                    }
+                    else if(y+1 < size){
+                        newCurrent = assignment.get(x).get(y+1);
+                    }
+                    else if(x-1 >= 0){
+                        newCurrent = assignment.get(x-1).get(y);
+                    }
+                    else if(x+1 < size){
+                        newCurrent = assignment.get(x+1).get(y);
+                    }
+                    newAssignment = BackTracking(assignment, size, newCurrent);
+                    if(complete(newAssignment)){
+                        return newAssignment;
+                    }
+                    mod.set(y, current);
+                    assignment.set(x, mod);
+                }
             }
-//            frontier.add(current);
-//            while(!frontier.empty()){
-//                CSP right;
-//                CSP left;
-//                CSP up;
-//                CSP down;
-//                Integer x = current.x;
-//                Integer y = current.y;
-//                if(x-1 > 0 && assignment.get(x-1).get(y).getValue() == '_'){
-//                    left = assignment.get(x-1).get(y);
-//                    frontier.add(left);
-//                }
-//                if(y-1 > 0 && assignment.get(x).get(y-1).getValue() == '_'){
-//                    up = assignment.get(x).get(y-1);
-//                    frontier.add(up);
-//                }
-//                if(x+1 < size && assignment.get(x+1).get(y).getValue() == '_'){
-//                    right = assignment.get(x+1).get(y);
-//                    frontier.add(right);
-//                }
             return assignment;
             }
         }

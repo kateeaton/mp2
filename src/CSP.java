@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class CSP {
     private Character value;
-    private ArrayList<Character> domain;
+    private ArrayList<Character> domain = new ArrayList<>();
     public Integer x;
     public Integer y;
     public boolean initialValue;

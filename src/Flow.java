@@ -26,13 +26,13 @@ public class Flow {
                     frontier.push(up);
                 }
             }
-            if(x+1 >= 0){
+            if(x+1 < size){
                 CSP right = assignment.get(x+1).get(y);
                 if(isValid(currValue, right, assignment, size)){
                     frontier.push(right);
                 }
             }
-            if(y+1 >= 0){
+            if(y+1 < size){
                 CSP down = assignment.get(x).get(y+1);
                 if(isValid(currValue, down, assignment, size)){
                     frontier.push(down);
@@ -66,14 +66,14 @@ public class Flow {
                         u = true;
                     }
                 }
-                if(x+1 >= 0){
+                if(x+1 < size){
                     CSP right = assignment.get(x+1).get(y);
                     if(isValid(currValue, right, assignment, size)){
                         frontier.push(right);
                         r = true;
                     }
                 }
-                if(y+1 >= 0){
+                if(y+1 < size){
                     CSP down = assignment.get(x).get(y+1);
                     if(isValid(currValue, down, assignment, size)){
                         frontier.push(down);
@@ -181,11 +181,11 @@ public class Flow {
             up = assignment.get(x).get(y - 1);
             u = true;
         }
-        if (x + 1 <= size) {
+        if (x + 1 < size) {
             right = assignment.get(x + 1).get(y);
             r = true;
         }
-        if (y + 1 <= size) {
+        if (y + 1 < size) {
             down = assignment.get(x).get(y + 1);
             d = true;
         }

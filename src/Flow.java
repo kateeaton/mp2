@@ -1,47 +1,139 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class Flow {
-    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, CSP current){
+    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){
         if(complete(assignment)){
             return assignment;
         }
         else{
-            //CSP current = selectVariable(assignment);
+            Stack<CSP> frontier = new Stack<>();
+            Integer i = 0;
+            Character currValue = domain.get(i);
+            CSP current = findSource( assignment, currValue, size);
             Integer x = current.x;
             Integer y = current.y;
-            for(Character value : current.getDomain()){
-                if(isValid(value, current, assignment, size)) {
-                    ArrayList<CSP> mod = assignment.get(x);
-                    CSP update = current;
-                    update.setValue(value);
-                    mod.set(y, update);
-                    assignment.set(x, mod);
-                    ArrayList<ArrayList<CSP>> newAssignment;
-                    CSP newCurrent = current;
-                    if(y-1 >= 0){
-                        newCurrent = assignment.get(x).get(y-1);
-                    }
-                    else if(y+1 < size){
-                        newCurrent = assignment.get(x).get(y+1);
-                    }
-                    else if(x-1 >= 0){
-                        newCurrent = assignment.get(x-1).get(y);
-                    }
-                    else if(x+1 < size){
-                        newCurrent = assignment.get(x+1).get(y);
-                    }
-                    newAssignment = BackTracking(assignment, size, newCurrent);
-                    if(complete(newAssignment)){
-                        return newAssignment;
-                    }
-                    mod.set(y, current);
-                    assignment.set(x, mod);
+            if(x-1 >= 0){
+                CSP left = assignment.get(x-1).get(y);
+                if(isValid(currValue, left, assignment, size)){
+                    frontier.push(left);
                 }
             }
+            if(y-1 >= 0){
+                CSP up = assignment.get(x).get(y-1);
+                if(isValid(currValue, up, assignment, size)){
+                    frontier.push(up);
+                }
+            }
+            if(x+1 >= 0){
+                CSP right = assignment.get(x+1).get(y);
+                if(isValid(currValue, right, assignment, size)){
+                    frontier.push(right);
+                }
+            }
+            if(y+1 >= 0){
+                CSP down = assignment.get(x).get(y+1);
+                if(isValid(currValue, down, assignment, size)){
+                    frontier.push(down);
+                }
+            }
+            //frontier.push(current);
+            while (!frontier.empty()) {
+                current = frontier.pop();
+                x = current.x;
+                y = current.y;
+                current.setValue(currValue);
+                current.visited.set(i, true);
+                ArrayList<CSP> modAssignment = assignment.get(x);
+                modAssignment.set(y, current);
+                assignment.set(x, modAssignment);
+                boolean u = false;
+                boolean d = false;
+                boolean r = false;
+                boolean l = false;
+                if(x-1 >= 0){
+                    CSP left = assignment.get(x-1).get(y);
+                    if(isValid(currValue, left, assignment, size)){
+                        frontier.push(left);
+                        l = true;
+                    }
+                }
+                if(y-1 >= 0){
+                    CSP up = assignment.get(x).get(y-1);
+                    if(isValid(currValue, up, assignment, size)){
+                        frontier.push(up);
+                        u = true;
+                    }
+                }
+                if(x+1 >= 0){
+                    CSP right = assignment.get(x+1).get(y);
+                    if(isValid(currValue, right, assignment, size)){
+                        frontier.push(right);
+                        r = true;
+                    }
+                }
+                if(y+1 >= 0){
+                    CSP down = assignment.get(x).get(y+1);
+                    if(isValid(currValue, down, assignment, size)){
+                        frontier.push(down);
+                        d = true;
+                    }
+                }
+                if(!u && !d && !l && !r){
+                    current.setValue('_');
+                    modAssignment = assignment.get(x);
+                    modAssignment.set(y, current);
+                    assignment.set(x, modAssignment);
+                }
+            }
+//            //CSP current = selectVariable(assignment);
+//            Integer x = current.x;
+//            Integer y = current.y;
+//            for(Character value : current.getDomain()){
+//                if(isValid(value, current, assignment, size)) {
+//                    ArrayList<CSP> mod = assignment.get(x);
+//                    CSP update = current;
+//                    update.setValue(value);
+//                    mod.set(y, update);
+//                    assignment.set(x, mod);
+//                    ArrayList<ArrayList<CSP>> newAssignment;
+//                    CSP newCurrent = current;
+//                    if(y-1 >= 0){
+//                        newCurrent = assignment.get(x).get(y-1);
+//                    }
+//                    else if(y+1 < size){
+//                        newCurrent = assignment.get(x).get(y+1);
+//                    }
+//                    else if(x-1 >= 0){
+//                        newCurrent = assignment.get(x-1).get(y);
+//                    }
+//                    else if(x+1 < size){
+//                        newCurrent = assignment.get(x+1).get(y);
+//                    }
+//                    newAssignment = BackTracking(assignment, size, newCurrent);
+//                    if(complete(newAssignment)){
+//                        return newAssignment;
+//                    }
+//                    mod.set(y, current);
+//                    assignment.set(x, mod);
+//                }
+//            }
+             //   return assignment;
             return assignment;
+        }
+    }
+    public CSP findSource(ArrayList<ArrayList<CSP>> assignment, Character value, Integer size){
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                Character currValue = assignment.get(i).get(j).getValue();
+                if(currValue == value){
+                    return assignment.get(i).get(j);
+                }
             }
         }
+        return assignment.get(size-1).get(size-1);
+    }
     public boolean complete(ArrayList<ArrayList<CSP>> arg) {
         for(ArrayList<CSP> i : arg){
             for(int j=0; j< i.size();j++ ){

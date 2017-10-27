@@ -97,6 +97,9 @@ public class Parser {
         for(int i=0; i<size; i++){
             for(int j=0; j<size; j++){
                 retVal.get(i).get(j).setDomain(domain);
+                for(int x = 0; x<domain.size(); x++){
+                    retVal.get(i).get(j).visited.add(false);
+                }
             }
         }
         return retVal;

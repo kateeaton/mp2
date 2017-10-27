@@ -7,16 +7,17 @@ public class Main {
         Parser s = new Parser();
         ArrayList<String> list = s.Parse("input55.txt");
         ArrayList<ArrayList<CSP>> assignment = new ArrayList();
+        ArrayList<ArrayList<CSP>> result = new ArrayList();
         assignment = s.getCSP(list, 5);
-        CSP current = assignment.get(0).get(0);
+        CSP current = assignment.get(0).get(1);
         Flow m = new Flow();
-        assignment = m.BackTracking(assignment, 5, current);
+        result = m.BackTracking(assignment, 5, current.getDomain());
         Character bleh;
         System.out.println();
         System.out.println();
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
-               bleh = assignment.get(i).get(j).getValue();
+               bleh = result.get(i).get(j).getValue();
                System.out.print(bleh);
             }
             System.out.println();

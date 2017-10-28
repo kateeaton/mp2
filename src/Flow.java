@@ -83,51 +83,68 @@ public class Flow {
             }
             //frontier.push(current);
             while (!frontier.empty()) {
+                Character bleh;
+                for(int j = 0; j < 5; j++){
+                    for(int k = 0; k < 5; k++){
+                        bleh = assignment.get(j).get(k).getValue();
+                        System.out.print(bleh);
+                    }
+                    System.out.println();
+                }
+                System.out.println();
                 current = frontier.pop();
                 x = current.x;
                 y = current.y;
-                current.setValue(currValue);
-                current.visited.set(i, true);
-                ArrayList<CSP> modAssignment = assignment.get(x);
-                modAssignment.set(y, current);
-                assignment.set(x, modAssignment);
-                boolean u = false;
-                boolean d = false;
-                boolean r = false;
-                boolean l = false;
-                if(x-1 >= 0){
-                    CSP left = assignment.get(x-1).get(y);
-                    if(isValid(currValue, left, assignment, size)){
-                        frontier.push(left);
-                        l = true;
+                if (current.getValue() == currValue && current.initialValue) {
+                    if(i < domain.size()) {
+                        i++;
+                        currValue = domain.get(i);
+                        current = findSource(assignment, currValue, size);
                     }
-                }
-                if(y-1 >= 0){
-                    CSP up = assignment.get(x).get(y-1);
-                    if(isValid(currValue, up, assignment, size)){
-                        frontier.push(up);
-                        u = true;
-                    }
-                }
-                if(x+1 < size){
-                    CSP right = assignment.get(x+1).get(y);
-                    if(isValid(currValue, right, assignment, size)){
-                        frontier.push(right);
-                        r = true;
-                    }
-                }
-                if(y+1 < size){
-                    CSP down = assignment.get(x).get(y+1);
-                    if(isValid(currValue, down, assignment, size)){
-                        frontier.push(down);
-                        d = true;
-                    }
-                }
-                if(!u && !d && !l && !r){
-                    current.setValue('_');
-                    modAssignment = assignment.get(x);
+                } else {
+                    current.setValue(currValue);
+                    current.visited.set(i, true);
+                    ArrayList<CSP> modAssignment = assignment.get(x);
                     modAssignment.set(y, current);
                     assignment.set(x, modAssignment);
+                    boolean u = false;
+                    boolean d = false;
+                    boolean r = false;
+                    boolean l = false;
+                    if (x - 1 >= 0) {
+                        CSP left = assignment.get(x - 1).get(y);
+                        if (isValid(currValue, left, assignment, size)) {
+                            frontier.push(left);
+                            l = true;
+                        }
+                    }
+                    if (y - 1 >= 0) {
+                        CSP up = assignment.get(x).get(y - 1);
+                        if (isValid(currValue, up, assignment, size)) {
+                            frontier.push(up);
+                            u = true;
+                        }
+                    }
+                    if (x + 1 < size) {
+                        CSP right = assignment.get(x + 1).get(y);
+                        if (isValid(currValue, right, assignment, size)) {
+                            frontier.push(right);
+                            r = true;
+                        }
+                    }
+                    if (y + 1 < size) {
+                        CSP down = assignment.get(x).get(y + 1);
+                        if (isValid(currValue, down, assignment, size)) {
+                            frontier.push(down);
+                            d = true;
+                        }
+                    }
+                    if (!u && !d && !l && !r) {
+                        current.setValue('_');
+                        modAssignment = assignment.get(x);
+                        modAssignment.set(y, current);
+                        assignment.set(x, modAssignment);
+                    }
                 }
             }
 //            //CSP current = selectVariable(assignment);
@@ -237,7 +254,11 @@ public class Flow {
         up = current;
         down = current;
 
-        Integer x = current.x;
+
+
+        Integer x = current.x;     if(current.initialValue){
+            return false;
+        }
         Integer y = current.y;
         if (x - 1 >= 0) {
             left = assignment.get(x - 1).get(y);

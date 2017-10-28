@@ -72,10 +72,13 @@ public class Parser {
 
     public ArrayList<ArrayList<CSP>> getCSP(ArrayList<String> arg, Integer size){
         ArrayList<ArrayList<CSP>> retVal = new ArrayList<>();
+        ArrayList<ArrayList<Character>> charMap = new ArrayList<>();
         ArrayList<Character> domain = new ArrayList<>();
         for(int i=0; i<size; i++){
             ArrayList<CSP> arr = new ArrayList();
+            ArrayList<Character> charMapInsert = new ArrayList();
             retVal.add(arr);
+            charMap.add(charMapInsert);
             for(int j=0; j<size; j++){
                 CSP temp = new CSP();
                 temp.x = i;
@@ -91,6 +94,7 @@ public class Parser {
                 }
                 temp.setValue(arg.get(i).charAt(j));
                 retVal.get(i).add(temp);
+                charMap.get(i).add(arg.get(i).charAt(j));
                 //retVal[i][j].setValue(arg.get(i).charAt(j));
             }
         }
@@ -99,6 +103,7 @@ public class Parser {
                 retVal.get(i).get(j).setDomain(domain);
                 for(int x = 0; x<domain.size(); x++){
                     retVal.get(i).get(j).visited.add(false);
+                    retVal.get(i).get(j).assignment = charMap;
                 }
             }
         }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static java.lang.Character.toLowerCase;
+import static java.lang.Character.toUpperCase;
 
 //File used to parse the txt files of the mazes
 public class Parser {
@@ -92,14 +93,16 @@ public class Parser {
                 }
                 else{
                     temp.initialValue = false;
+                    temp.parent = false;
                 }
                 temp.setValue(arg.get(i).charAt(j));
                 retVal.get(i).add(temp);
-                charMap[i][j] = temp.getValue();
+                charMap[i][j] = toLowerCase(temp.getValue());
                 //charMap[i][j] = toLowerCase(charMap[i][j]);
                 //retVal[i][j].setValue(arg.get(i).charAt(j));
             }
         }
+        charMap[0][0] = toUpperCase(charMap[0][0]);
         for(int i=0; i<size; i++){
             for(int j=0; j<size; j++){
                 retVal.get(i).get(j).setDomain(domain);

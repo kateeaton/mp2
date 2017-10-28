@@ -10,6 +10,7 @@ public class CSP {
     public Integer x;
     public Integer y;
     public boolean initialValue;
+    public boolean parent;
     public Character getValue(){
         return value;
     }

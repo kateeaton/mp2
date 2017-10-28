@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 //This class is used to pass in the parsed maze files into the search functions.
 //Changing the arguments of the parse function will change which files are solved
@@ -42,6 +43,12 @@ public class Main {
 //        find.informedSearch(list0, start, visited0, end, 'a');
 //        find.informedSearch(list1, start, visited1, end, 'g');
 //        find.informedSearch(alist, astart, visiteda, aend, 'a');
+
+        boardmaker h = new boardmaker();
+        ArrayList<ArrayList<Pawn>> game = new ArrayList();
+        game = h.Board();
+        Breakthrough g = new Breakthrough();
+        g.PlayBreakthrough(false, game);
     }
 
 }

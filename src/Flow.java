@@ -86,12 +86,13 @@ public class Flow {
                 Character bleh;
                 for(int j = 0; j < 5; j++){
                     for(int k = 0; k < 5; k++){
-                        bleh = assignment.get(j).get(k).getValue();
-                        System.out.print(bleh);
+                        System.out.print(current.charMap[j][k]);
                     }
                     System.out.println();
                 }
                 System.out.println();
+                System.out.print(x);
+                System.out.println(y);
                 current = frontier.pop();
                 x = current.x;
                 y = current.y;
@@ -100,9 +101,17 @@ public class Flow {
                         i++;
                         currValue = domain.get(i);
                         current = findSource(assignment, currValue, size);
+                        frontier.push(current);
                     }
                 } else {
-                    current.setValue(currValue);
+                    current.setMap(currValue);
+                    for(int j = 0; j < 5; j++){
+                        for(int k = 0; k < 5; k++){
+                            System.out.print(current.charMap[j][k]);
+                        }
+                        System.out.println();
+                    }
+                    System.out.println();
                     current.visited.set(i, true);
                     ArrayList<CSP> modAssignment = assignment.get(x);
                     modAssignment.set(y, current);
@@ -113,34 +122,55 @@ public class Flow {
                     boolean l = false;
                     if (x - 1 >= 0) {
                         CSP left = assignment.get(x - 1).get(y);
-                        if (isValid(currValue, left, assignment, size)) {
+
+                        if (isNewValid(currValue, left, current.charMap, size) ) {
+                            left.updateMap(current.charMap);
                             frontier.push(left);
                             l = true;
+                        }
+                        else{
+                            left.setMapValue(x, y, '_');
                         }
                     }
                     if (y - 1 >= 0) {
                         CSP up = assignment.get(x).get(y - 1);
-                        if (isValid(currValue, up, assignment, size)) {
+
+                        if (isNewValid(currValue, up, current.charMap, size) ) {
+                            up.updateMap(current.charMap);
                             frontier.push(up);
                             u = true;
+                        }
+                        else{
+                            up.setMapValue(x, y, '_');
                         }
                     }
                     if (x + 1 < size) {
                         CSP right = assignment.get(x + 1).get(y);
-                        if (isValid(currValue, right, assignment, size)) {
+
+                        if (isNewValid(currValue, right, current.charMap,size) ) {
+                            right.updateMap(current.charMap);
                             frontier.push(right);
                             r = true;
+                        }
+                        else{
+                            right.setMapValue(x, y, '_');
                         }
                     }
                     if (y + 1 < size) {
                         CSP down = assignment.get(x).get(y + 1);
-                        if (isValid(currValue, down, assignment, size)) {
+
+                        if (isNewValid(currValue, down, current.charMap,size) ) {
+                            down.updateMap(current.charMap);
                             frontier.push(down);
                             d = true;
                         }
+                        else{
+                            down.setMapValue(x, y, '_');
+                        }
                     }
                     if (!u && !d && !l && !r) {
-                        current.setValue('_');
+                        current.setMap('_');
+                        current.visited.set(i, false);
                         modAssignment = assignment.get(x);
                         modAssignment.set(y, current);
                         assignment.set(x, modAssignment);
@@ -238,6 +268,100 @@ public class Flow {
         }
         return false;
     }*/
+
+    public boolean isNewValid(Character value, CSP current, Character[][] charMap, Integer size) {
+        boolean retVal = true;
+        boolean r = false;
+        boolean l = false;
+        boolean u = false;
+        boolean d = false;
+        Character right;
+        Character left;
+        Character up;
+        Character down;
+        right = current.getValue();
+        left = current.getValue();
+        up = current.getValue();
+        down = current.getValue();
+
+        //Character[][] charMap = current.charMap;
+
+
+        Integer x = current.x;
+        if(current.initialValue){
+            return false;
+        }
+        Integer y = current.y;
+        if (x - 1 >= 0) {
+            left = charMap[x - 1][y];
+            l = true;
+        }
+        if (y - 1 >= 0) {
+            up = charMap[x][y-1];
+            u = true;
+        }
+        if (x + 1 < size) {
+            right = charMap[x+1][y];
+            r = true;
+        }
+        if (y + 1 < size) {
+            down = charMap[x][y+1];
+            d = true;
+        }
+
+        if(l && r && u && d) {
+            if(left== value && (right != value && up != value && down != value)) { return true; }
+            else if(right == value && (left != value && up != value && down != value)) { return true; }
+            else if(up == value && (right != value && left != value && down != value)) { return true; }
+            else if(down == value && (left != value && up != value && right != value)) { return true; }
+            else{ return false; }
+        }
+        else if(l && u && d) {
+            if(left == value && (up != value && down != value)) { return true; }
+            else if(up == value && (left != value && down != value)){ return true; }
+            else if(down == value && (left != value && up != value )){ return true; }
+            else{ return false; }
+        }
+        else if(r && u && d) {
+            if(right == value && (up != value && down != value)) { return true; }
+            else if(up == value && (right != value && down != value)) { return true; }
+            else if(down == value && (right != value && up != value )){ return true; }
+            else{ return false; }
+        }
+        else if(l && r && d) {
+            if(left == value && (right != value && down != value)) { return true; }
+            else if(right == value && (left != value && down != value)) { return true; }
+            else if(down == value && (left != value && right != value )){ return true; }
+            else{ return false; }
+        }
+        else if(l && r && u) {
+            if(left == value && (up != value && right != value)) { return true; }
+            else if(up == value && (left != value && right != value)) { return true; }
+            else if(right == value && (left != value && up != value )){ return true; }
+            else{ return false; }
+        }
+        else if(l && d) {
+            if(left == value && (down != value)) { return true; }
+            else if(down == value && (left != value)){ return true; }
+            else{ return false; }
+        }
+        else if(l && u) {
+            if(left == value && (up != value)) { return true; }
+            else if(up == value && (left != value)){ return true; }
+            else{ return false; }
+        }
+        else if(r && u) {
+            if(right == value && (up != value)) { return true; }
+            else if(up == value && (right != value)){ return true; }
+            else{ return false; }
+        }
+        else if(r && d) {
+            if(right == value && (down != value)) { return true; }
+            else if(down == value && (right != value)){ return true; }
+            else{ return false; }
+        }
+        return retVal;
+    }
 
     public boolean isValid(Character value, CSP current, ArrayList<ArrayList<CSP>> assignment, Integer size) {
         boolean retVal = true;

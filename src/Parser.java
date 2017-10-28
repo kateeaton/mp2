@@ -2,6 +2,9 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.lang.Character.toLowerCase;
+
 //File used to parse the txt files of the mazes
 public class Parser {
 
@@ -72,13 +75,11 @@ public class Parser {
 
     public ArrayList<ArrayList<CSP>> getCSP(ArrayList<String> arg, Integer size){
         ArrayList<ArrayList<CSP>> retVal = new ArrayList<>();
-        ArrayList<ArrayList<Character>> charMap = new ArrayList<>();
+        Character[][] charMap = new Character[5][5];
         ArrayList<Character> domain = new ArrayList<>();
         for(int i=0; i<size; i++){
             ArrayList<CSP> arr = new ArrayList();
-            ArrayList<Character> charMapInsert = new ArrayList();
             retVal.add(arr);
-            charMap.add(charMapInsert);
             for(int j=0; j<size; j++){
                 CSP temp = new CSP();
                 temp.x = i;
@@ -94,16 +95,17 @@ public class Parser {
                 }
                 temp.setValue(arg.get(i).charAt(j));
                 retVal.get(i).add(temp);
-                charMap.get(i).add(arg.get(i).charAt(j));
+                charMap[i][j] = temp.getValue();
+                //charMap[i][j] = toLowerCase(charMap[i][j]);
                 //retVal[i][j].setValue(arg.get(i).charAt(j));
             }
         }
         for(int i=0; i<size; i++){
             for(int j=0; j<size; j++){
                 retVal.get(i).get(j).setDomain(domain);
+                retVal.get(i).get(j).updateMap(charMap);
                 for(int x = 0; x<domain.size(); x++){
                     retVal.get(i).get(j).visited.add(false);
-                    retVal.get(i).get(j).assignment = charMap;
                 }
             }
         }

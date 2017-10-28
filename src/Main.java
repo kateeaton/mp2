@@ -15,6 +15,13 @@ public class Main {
         Character bleh;
         System.out.println();
         System.out.println();
+//        for(int i = 0; i < 5; i++){
+//            for(int j = 0; j < 5; j++){
+//                result.get(i).get(j).printMap();
+//                System.out.println();
+//            }
+//            System.out.println();
+//        }
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
                bleh = result.get(i).get(j).getValue();

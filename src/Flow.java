@@ -3,12 +3,55 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Flow {
-    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){
-        if(complete(assignment)){
-            return assignment;
-        }
+
+    //ArrayList<ArrayList<CSP>> assignment = new ArrayList<ArrayList<CSP>>();
+    //Integer size = new Integer();
+    //ArrayList<Character> domain = new ArrayList<Character>();
+    //Character currDomain = new Character();
+    //Character clear = '_';
+
+    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){//(ArrayList<ArrayList<CSP>> assignmentIn, Integer sizeIn, ArrayList<Character> domainIn){
+        //initialize
+        Stack<CSP> frontier = new Stack<>();
+        //assignment = assignmentIn;
+        //size = sizeIn;
+        //domain = domainIn;
+        CSP value = new CSP();
+        //value = findSource();
+
+
+        //loop
+       // while(!frontier.isEmpty()){
+            if(complete(assignment)){
+                return assignment;
+            }
+
+            //if(completedDomain(assignment)){
+            //    temp = findSource();
+            //}
+            /*else{
+                value = frontier.pop();
+                assignment.get(value.x).get(value.y).setValue(currDomain);
+                //assignment.get(value.x).get(value.y).setVisited(currDomain, true);
+
+                if(isValid(value.x - 1), value.y)){
+
+                }
+                else if(isValid(value.x + 1, value.y)){
+
+                }
+                else if (isValid(value.x, value.y - 1)){
+
+                }
+                else if (isValid(value.x, value.y+1)){
+
+                }
+                else{ assignment.get(value.x).get(value.y).setValue(clear); }
+
+            }
+        }*/
+
         else{
-            Stack<CSP> frontier = new Stack<>();
             Integer i = 0;
             Character currValue = domain.get(i);
             CSP current = findSource( assignment, currValue, size);
@@ -155,6 +198,29 @@ public class Flow {
         return assignment.get(0).get(0);
     }
 
+    public boolean isInBounds(Integer x, Integer y){
+        Boolean retVal = true;
+        //if( x < 0 || y < 0 || x >= size || y >= size){
+          //  retVal = false;
+        //}
+        return retVal;
+    }
+
+    public boolean isOpen(CSP value){
+        if (value.getValue() == '_') {
+            //if (value.Visited(currDomain) == false) {
+                return true;
+            //}
+        }
+        return false;
+    }
+
+   /* public boolean isValid(Integer x, Integer y){
+        if(isInBounds(x, y)){
+            if(isOpen(assignment.get(x).get(y))){ return true;}
+        }
+        return false;
+    }*/
 
     public boolean isValid(Character value, CSP current, ArrayList<ArrayList<CSP>> assignment, Integer size) {
         boolean retVal = true;
@@ -243,5 +309,4 @@ public class Flow {
         }
         return retVal;
     }
-
 }

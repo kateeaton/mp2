@@ -9,6 +9,7 @@ public class CSP {
     public Character[][] charMap = new Character[5][5];
     public Integer x;
     public Integer y;
+    public Integer i;
     public boolean initialValue;
     public boolean parent;
     public Character getValue(){

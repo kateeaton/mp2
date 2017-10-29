@@ -55,29 +55,34 @@ public class Flow {
             Integer i = 0;
             Character currValue = domain.get(i);
             CSP current = findSource( assignment, currValue, size);
+            current.i = i;
             current.parent = true;
             Integer x = current.x;
             Integer y = current.y;
             if(x-1 >= 0){
                 CSP left = assignment.get(x-1).get(y);
+                left.i = i;
                 if(isValid(currValue, left, assignment, size)){
                     frontier.push(left);
                 }
             }
             if(y-1 >= 0){
                 CSP up = assignment.get(x).get(y-1);
+                up.i = i;
                 if(isValid(currValue, up, assignment, size)){
                     frontier.push(up);
                 }
             }
             if(x+1 < size){
                 CSP right = assignment.get(x+1).get(y);
+                right.i = i;
                 if(isValid(currValue, right, assignment, size)){
                     frontier.push(right);
                 }
             }
             if(y+1 < size){
                 CSP down = assignment.get(x).get(y+1);
+                down.i = i;
                 if(isValid(currValue, down, assignment, size)){
                     frontier.push(down);
                 }
@@ -92,10 +97,12 @@ public class Flow {
 //                    }
 //                    System.out.println();
 //                }
+
                 System.out.println();
                 System.out.print(x);
                 System.out.println(y);
                 current = frontier.pop();
+                currValue = domain.get(current.i);
                 x = current.x;
                 y = current.y;
                     current.setMap(currValue);
@@ -116,6 +123,7 @@ public class Flow {
                     boolean l = false;
                     if (x - 1 >= 0) {
                         CSP left = assignment.get(x - 1).get(y);
+                        left.i = current.i;
 
                         if (isNewValid(currValue, left, current.charMap, assignment, size) ) {
                             left.updateMap(current.charMap);
@@ -132,7 +140,7 @@ public class Flow {
                     }
                     if (y - 1 >= 0) {
                         CSP up = assignment.get(x).get(y - 1);
-
+                        up.i = current.i;
                         if (isNewValid(currValue, up, current.charMap, assignment,size) ) {
                             up.updateMap(current.charMap);
                             frontier.push(up);
@@ -148,7 +156,7 @@ public class Flow {
                     }
                     if (x + 1 < size) {
                         CSP right = assignment.get(x + 1).get(y);
-
+                        right.i = current.i;
                         if ( isNewValid(currValue, right, current.charMap,assignment,size) ) {
                             right.updateMap(current.charMap);
                             frontier.push(right);
@@ -164,7 +172,7 @@ public class Flow {
                     }
                     if (y + 1 < size) {
                         CSP down = assignment.get(x).get(y + 1);
-
+                        down.i = current.i;
                         if (isNewValid(currValue, down, current.charMap,assignment,size) ) {
                             down.updateMap(current.charMap);
                             frontier.push(down);
@@ -187,10 +195,12 @@ public class Flow {
                     }
                 if (done) {
                     if(i < domain.size()-1) {
+                        i = current.i;
                         i++;
                         CSP temp;
                         currValue = domain.get(i);
                         temp = findSource(assignment, currValue, size);
+                        temp.i = i;
                         Integer tempx = temp.x;
                         Integer tempy = temp.y;
                         temp.updateMap(current.charMap);

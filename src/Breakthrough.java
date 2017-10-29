@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.lang.Math.*;
 
+import static java.util.Collections.max;
+
 public class Breakthrough {
 
     public int p0_rem;
@@ -16,7 +18,6 @@ public class Breakthrough {
         //initialize piece counts
         p0_rem = 16;
         p1_rem = 16;
-        //game = gameIn;
 
         //initialize board
         for(int i = 0; i < 8; i++){
@@ -30,10 +31,10 @@ public class Breakthrough {
         else {current_player = false;}
         MinimaxDecide(game);
         PrintCurrent(game);
-
-        //initialize first turn
-        if(p1_start){ current_player= true;}
-        else {current_player = false;}
+        System.out.println();
+        current_player = !current_player;
+        MovePawn(0,6, 1, game);
+        PrintCurrent(game);
 /*
         while(!complete()){
             //first player turn
@@ -53,19 +54,73 @@ public class Breakthrough {
         int curr_y = 0;
         ArrayList<ArrayList<Integer>> MyTuples = FindPawns(game, current_player);
         ArrayList<ArrayList<Integer>> TheirTuples = FindPawns(game, !current_player);
-        ArrayList<Double> utility = new ArrayList(8);
+        ArrayList<Double> utility = new ArrayList();
         for( ArrayList<Integer> list : MyTuples){
             System.out.println();
             for(Integer i : list){
                 System.out.print(i);
             }
         }
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < MyTuples.size(); i++){
             curr_x = MyTuples.get(0).get(i);
             curr_y = MyTuples.get(1).get(i);
 
+            utility.add(MinimaxTurn1(MyTuples, TheirTuples, i));
         }
         //MovePawn(choice_x, choice_y, move, game);
+    }
+
+    public double MinimaxTurn1(ArrayList<ArrayList<Integer>> MyTuples, ArrayList<ArrayList<Integer>> TheirTuples, int current){
+        ArrayList<Double> utility = new ArrayList();
+        for(int j = 0; j < 3; j++){
+            utility.add(MinimaxTurn2(Guess(MyTuples, current, j-1), TheirTuples, current));
+        }
+        return max(utility);
+    }
+
+    public double MinimaxTurn2(ArrayList<ArrayList<Integer>> MyTuples, ArrayList<ArrayList<Integer>> TheirTuples, int current){
+        //TODO
+        return 0;
+    }
+    public boolean isValidMove(int current, int dx, ArrayList<ArrayList<Integer>> MyTuples, ArrayList<ArrayList<Integer>> TheirTuples){
+
+        int newX = MyTuples.get(0).get(current) + dx;
+        int newY;
+        if(current_player){
+            newY = MyTuples.get(1).get(current) + 1;
+        }
+        else {newY = MyTuples.get(1).get(current) - 1;}
+
+        //check to make sure not sharing space with another of our pawns
+        for(int i = 0; i < MyTuples.size(); i++){
+            if(newX == MyTuples.get(0).get(i)){
+                if(newY == MyTuples.get(1).get(i)){
+                    return false;
+                }
+            }
+        }
+
+        //check to make sure we aren't forward blocked by the enemy
+        for(int i = 0; i < TheirTuples.size(); i++){
+            if(newX == TheirTuples.get(0).get(i)){
+                if(newY == TheirTuples.get(1).get(i)){
+                    if(dx == 0) return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public ArrayList<ArrayList<Integer>> Guess(ArrayList<ArrayList<Integer>> Tuples, int current, int dx){
+        Tuples.get(0).set(current, Tuples.get(0).get(current) + dx);
+        if(!current_player) {
+            Tuples.get(1).set(current, Tuples.get(1).get(current) + 1);
+        }
+        else
+            Tuples.get(1).set(current, Tuples.get(1).get(current) - 1);
+
+        return Tuples;
     }
 
     public void AlphaBetaDecide(ArrayList<ArrayList<Pawn>> game){
@@ -97,12 +152,19 @@ public class Breakthrough {
 
     public void MovePawn(int x, int y, int dx, ArrayList<ArrayList<Pawn>> game){
         game.get(x).get(y).Remove();
-        if(game.get(x+dx).get(y+1).occupied == true){
-            game.get(x+dx).get(y+1).Capture();
-            if(!current_player)   {p1_rem = p1_rem-1;}  //if current player == 0
-            else {p0_rem = p0_rem-1;}
+        if(!current_player) {
+            if (game.get(x + dx).get(y + 1).occupied == true) {
+                game.get(x + dx).get(y + 1).Capture();
+                p1_rem = p1_rem - 1;
+            }
+            else{game.get(x+dx).get(y+1).Place(current_player);}
+        }else{
+            if(game.get(x+dx).get(y-1).occupied == true) {
+                game.get(x + dx).get(y - 1).Capture();
+                p0_rem = p0_rem - 1;
+            }
+            else{game.get(x+dx).get(y-1).Place(current_player);}
         }
-        else{game.get(x+dx).get(y+1).Place(current_player);}
     }
 
     public boolean P0Victory(ArrayList<ArrayList<Pawn>> game){
@@ -146,8 +208,8 @@ public class Breakthrough {
                 if (!value.occupied) {
                     System.out.print("  ");
                 } else if (!value.player) {
-                    System.out.print('O');
-                } else System.out.print('X');
+                    System.out.print(" O");
+                } else System.out.print(" X");
             }
         }
     }

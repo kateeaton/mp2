@@ -10,7 +10,7 @@ public class Flow {
     //Character currDomain = new Character();
     //Character clear = '_';
 
-    public ArrayList<ArrayList<CSP>> BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){//(ArrayList<ArrayList<CSP>> assignmentIn, Integer sizeIn, ArrayList<Character> domainIn){
+    public Character[][] BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){//(ArrayList<ArrayList<CSP>> assignmentIn, Integer sizeIn, ArrayList<Character> domainIn){
         //initialize
         Stack<CSP> frontier = new Stack<>();
         //assignment = assignmentIn;
@@ -23,7 +23,7 @@ public class Flow {
         //loop
        // while(!frontier.isEmpty()){
             if(complete(assignment)){
-                return assignment;
+                return assignment.get(0).get(0).charMap;
             }
 
             //if(completedDomain(assignment)){
@@ -186,7 +186,7 @@ public class Flow {
                             down.setMapValue(x, y, '_');
                         }
                     }
-                    if (!u && !d && !l && !r) {
+                    if (!u && !d && !l && !r && !done) {
                         current.setMap('_');
                         current.visited.set(i, false);
                         modAssignment = assignment.get(x);
@@ -244,8 +244,9 @@ public class Flow {
 //                    assignment.set(x, mod);
 //                }
 //            }
-             //   return assignment;
-            return assignment;
+             //   return assignment;        t
+                current.upperCase();
+                return current.charMap;
         }
     }
     public CSP findSource(ArrayList<ArrayList<CSP>> assignment, Character value, Integer size){

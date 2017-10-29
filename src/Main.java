@@ -7,7 +7,7 @@ public class Main {
         Parser s = new Parser();
         ArrayList<String> list = s.Parse("input55.txt");
         ArrayList<ArrayList<CSP>> assignment = new ArrayList();
-        ArrayList<ArrayList<CSP>> result = new ArrayList();
+        Character[][] result;
         assignment = s.getCSP(list, 5);
         CSP current = assignment.get(0).get(1);
         Flow m = new Flow();
@@ -24,8 +24,7 @@ public class Main {
 //        }
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
-               bleh = result.get(i).get(j).getValue();
-               System.out.print(bleh);
+               System.out.print(result[i][j]);
             }
             System.out.println();
         }

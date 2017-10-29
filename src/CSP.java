@@ -30,6 +30,13 @@ public class CSP {
     public void setMapValue(Integer newX, Integer newY, Character inValue){
         charMap[newX][newY] = inValue;
     }
+    public void upperCase(){
+        for(int i=0; i<charMap.length; i++){
+            for(int j=0; j<charMap[i].length; j++){
+                charMap[i][j] = Character.toUpperCase(charMap[i][j]);
+            }
+        }
+    }
     public void printMap(){
         for(int i=0; i<5; i++){
             for(int j=0; j<5; j++) {

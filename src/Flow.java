@@ -1,15 +1,226 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class Flow {
 
-    //ArrayList<ArrayList<CSP>> assignment = new ArrayList<ArrayList<CSP>>();
-    //Integer size = new Integer();
-    //ArrayList<Character> domain = new ArrayList<Character>();
-    //Character currDomain = new Character();
-    //Character clear = '_';
+    public Character[][] Smart(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){
+        Stack<CSP> frontier = new Stack<>();
+        if(complete(assignment)){
+            return assignment.get(0).get(0).charMap;
+        }
+        else{
+            Integer nodes = 0;
+            Integer i = 0;
+            Character currValue = domain.get(i);
+            CSP current = findSource( assignment, currValue, size);
+            current.i = i;
+            current.parent = true;
+            Integer x = current.x;
+            Integer y = current.y;
+            Comparator<CSP> comparator = new CSPComparator();
+            PriorityQueue<CSP> toInsert = new PriorityQueue<CSP>(size*size, comparator);
+            if(x-1 >= 0){
+                CSP left = assignment.get(x-1).get(y);
+                left.i = i;
+                if(isValid(currValue, left, assignment, size)){
+                    nodes++;
+                    left.distance = distance(left, size);
+                    toInsert.add(left);
+//                    frontier.push(left);
+                }
+            }
+            if(y-1 >= 0){
+                CSP up = assignment.get(x).get(y-1);
+                up.i = i;
+                if(isValid(currValue, up, assignment, size)){
+                    nodes++;
+                    up.distance = distance(up, size);
+                    toInsert.add(up);
+//                    frontier.push(up);
+                }
+            }
+            if(x+1 < size){
+                CSP right = assignment.get(x+1).get(y);
+                right.i = i;
+                if(isValid(currValue, right, assignment, size)){
+                    nodes++;
+                    right.distance = distance(right, size);
+                    toInsert.add(right);
+//                    frontier.push(right);
+                }
+            }
+            if(y+1 < size){
+                CSP down = assignment.get(x).get(y+1);
+                down.i = i;
+                if(isValid(currValue, down, assignment, size)){
+                    nodes++;
+                    down.distance = distance(down, size);
+                    toInsert.add(down);
+//                    frontier.push(down);
+                }
+            }
+            for(CSP curr : toInsert){
+                frontier.add(curr);
+            }
+            toInsert.clear();
+            boolean done = false;
+            while (!frontier.empty()) {
+                Character bleh;
+                System.out.println();
+                System.out.print(x);
+                System.out.println(y);
+                current = frontier.pop();
+                currValue = domain.get(current.i);
+                x = current.x;
+                y = current.y;
+                current.setMap(currValue);
+                for(int j = 0; j < size; j++){
+                    for(int k = 0; k < size; k++){
+                        System.out.print(current.charMap[j][k]);
+                    }
+                    System.out.println();
+                }
+                System.out.println();
+                current.visited.set(i, true);
+                ArrayList<CSP> modAssignment = assignment.get(x);
+                modAssignment.set(y, current);
+                assignment.set(x, modAssignment);
+                boolean u = false;
+                boolean d = false;
+                boolean r = false;
+                boolean l = false;
+                if (x - 1 >= 0) {
+                    CSP left = assignment.get(x - 1).get(y);
+                    left.i = current.i;
 
+                    if (isNewValid(currValue, left, current.charMap, assignment, size) ) {
+                        left.updateMap(current.charMap);
+                        nodes++;
+                        left.distance = distance(left, size);
+                        toInsert.add(left);
+//                        frontier.push(left);
+                        l = true;
+                    }
+                    else if(left.initialValue && Character.toUpperCase(left.getValue()) == currValue && !left.parent){
+                        left.setValue(Character.toUpperCase(left.getValue()));
+                        done = true;
+                    }
+                    else{
+                        left.setMapValue(x, y, '_');
+                    }
+                }
+                if (y - 1 >= 0) {
+                    CSP up = assignment.get(x).get(y - 1);
+                    up.i = current.i;
+                    if (isNewValid(currValue, up, current.charMap, assignment,size) ) {
+                        up.updateMap(current.charMap);
+                        nodes++;
+                        up.distance = distance(up, size);
+                        toInsert.add(up);
+//                        frontier.push(up);
+                        u = true;
+                    }
+                    else if(up.initialValue  && Character.toUpperCase(up.getValue()) == currValue &&!up.parent){
+                        up.setValue(Character.toUpperCase(up.getValue()));
+                        done = true;
+                    }
+                    else{
+                        up.setMapValue(x, y, '_');
+                    }
+                }
+                if (x + 1 < size) {
+                    CSP right = assignment.get(x + 1).get(y);
+                    right.i = current.i;
+                    if ( isNewValid(currValue, right, current.charMap,assignment,size) ) {
+                        right.updateMap(current.charMap);
+                        nodes++;
+                        right.distance = distance(right, size);
+                        toInsert.add(right);
+//                        frontier.push(right);
+                        r = true;
+                    }
+                    else if(right.initialValue && Character.toUpperCase(right.getValue()) == currValue &&!right.parent){
+                        right.setValue(Character.toUpperCase(right.getValue()));
+                        done = true;
+                    }
+                    else{
+                        right.setMapValue(x, y, '_');
+                    }
+                }
+                if (y + 1 < size) {
+                    CSP down = assignment.get(x).get(y + 1);
+                    down.i = current.i;
+                    if (isNewValid(currValue, down, current.charMap,assignment,size) ) {
+                        down.updateMap(current.charMap);
+                        nodes++;
+                        down.distance = distance(down, size);
+                        toInsert.add(down);
+//                        frontier.push(down);
+                        d = true;
+                    }
+                    else if(down.initialValue  && Character.toUpperCase(down.getValue()) == currValue &&!down.parent){
+                        down.setValue(Character.toUpperCase(down.getValue()));
+                        done = true;
+                    }
+                    else{
+                        down.setMapValue(x, y, '_');
+                    }
+                }
+                for(CSP curr : toInsert){
+                    frontier.add(curr);
+                }
+                toInsert.clear();
+                if (!u && !d && !l && !r && !done) {
+                    current.setMap('_');
+                    current.visited.set(i, false);
+                    modAssignment = assignment.get(x);
+                    modAssignment.set(y, current);
+                    assignment.set(x, modAssignment);
+                }
+                if (done) {
+                    i = current.i;
+                    if(i < domain.size()-1) {
+
+                        i++;
+                        CSP temp;
+                        currValue = domain.get(i);
+                        temp = findSource(assignment, currValue, size);
+                        temp.i = i;
+                        Integer tempx = temp.x;
+                        Integer tempy = temp.y;
+                        temp.updateMap(current.charMap);
+                        temp.charMap[tempx][tempy] = temp.getValue();
+                        temp.parent = true;
+                        nodes++;
+                        frontier.push(temp);
+                        done = false;
+                    }
+                }
+                if(isComplete(current.charMap)){
+                    frontier.clear();
+                }
+            }
+            current.upperCase();
+            System.out.println(nodes);
+            System.out.println();
+            return current.charMap;
+        }
+
+    }
+    public Integer distance(CSP current, Integer size){
+        Integer x = (current.x - (size-1)/2);
+        if(x < 0){
+            x = x*(-1);
+        }
+        Integer y = (current.y - (size-1)/2);
+        if(y < 0){
+            y = y*(-1);
+        }
+        return x+y;
+    }
     public Character[][] BackTracking(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain){//(ArrayList<ArrayList<CSP>> assignmentIn, Integer sizeIn, ArrayList<Character> domainIn){
         //initialize
         Stack<CSP> frontier = new Stack<>();
@@ -52,6 +263,7 @@ public class Flow {
 //        }
 
         else{
+                Integer nodes = 0;
             Integer i = 0;
             Character currValue = domain.get(i);
             CSP current = findSource( assignment, currValue, size);
@@ -63,6 +275,7 @@ public class Flow {
                 CSP left = assignment.get(x-1).get(y);
                 left.i = i;
                 if(isValid(currValue, left, assignment, size)){
+                    nodes++;
                     frontier.push(left);
                 }
             }
@@ -70,6 +283,7 @@ public class Flow {
                 CSP up = assignment.get(x).get(y-1);
                 up.i = i;
                 if(isValid(currValue, up, assignment, size)){
+                    nodes++;
                     frontier.push(up);
                 }
             }
@@ -77,6 +291,7 @@ public class Flow {
                 CSP right = assignment.get(x+1).get(y);
                 right.i = i;
                 if(isValid(currValue, right, assignment, size)){
+                    nodes++;
                     frontier.push(right);
                 }
             }
@@ -84,6 +299,7 @@ public class Flow {
                 CSP down = assignment.get(x).get(y+1);
                 down.i = i;
                 if(isValid(currValue, down, assignment, size)){
+                    nodes++;
                     frontier.push(down);
                 }
             }
@@ -126,6 +342,7 @@ public class Flow {
 
                         if (isNewValid(currValue, left, current.charMap, assignment, size) ) {
                             left.updateMap(current.charMap);
+                            nodes++;
                             frontier.push(left);
                             l = true;
                         }
@@ -142,6 +359,7 @@ public class Flow {
                         up.i = current.i;
                         if (isNewValid(currValue, up, current.charMap, assignment,size) ) {
                             up.updateMap(current.charMap);
+                            nodes++;
                             frontier.push(up);
                             u = true;
                         }
@@ -158,6 +376,7 @@ public class Flow {
                         right.i = current.i;
                         if ( isNewValid(currValue, right, current.charMap,assignment,size) ) {
                             right.updateMap(current.charMap);
+                            nodes++;
                             frontier.push(right);
                             r = true;
                         }
@@ -174,6 +393,7 @@ public class Flow {
                         down.i = current.i;
                         if (isNewValid(currValue, down, current.charMap,assignment,size) ) {
                             down.updateMap(current.charMap);
+                            nodes++;
                             frontier.push(down);
                             d = true;
                         }
@@ -206,6 +426,7 @@ public class Flow {
                         temp.updateMap(current.charMap);
                         temp.charMap[tempx][tempy] = temp.getValue();
                         temp.parent = true;
+                        nodes++;
                         frontier.push(temp);
                         done = false;
                     }
@@ -249,6 +470,8 @@ public class Flow {
 //            }
              //   return assignment;        t
                 current.upperCase();
+            System.out.println(nodes);
+            System.out.println();
                 return current.charMap;
         }
     }

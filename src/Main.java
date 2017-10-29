@@ -12,7 +12,7 @@ public class Main {
         assignment = s.getCSP(list, size);
         CSP current = assignment.get(0).get(1);
         Flow m = new Flow();
-        result = m.BackTracking(assignment, size, current.getDomain());
+        result = m.Smart(assignment, size, current.getDomain());
         Character bleh;
         System.out.println();
         System.out.println();

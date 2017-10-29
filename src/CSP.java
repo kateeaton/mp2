@@ -10,6 +10,7 @@ public class CSP {
     public Integer x;
     public Integer y;
     public Integer i;
+    public Integer distance;
     public boolean initialValue;
     public boolean parent;
     public Character getValue(){

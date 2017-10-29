@@ -84,139 +84,124 @@ public class Flow {
             }
             boolean done = false;
             //frontier.push(current);
-                for(int index = 0; index < domain.size(); index++) {
-//                    currValue = domain.get(index);
-//                    current = findSource(assignment, currValue, size);
-//                    Integer tempx = current.x;
-//                    Integer tempy = current.y;
-//                    current.charMap[tempx][tempy] = current.getValue();
-//                    current.parent = true;
-//                    frontier.push(current);
-                    while (!frontier.empty()) {
-                        Character bleh;
-                        for (int j = 0; j < 5; j++) {
-                            for (int k = 0; k < 5; k++) {
-                                System.out.print(current.charMap[j][k]);
-                            }
-                            System.out.println();
-                        }
-                        System.out.println();
-                        System.out.print(x);
-                        System.out.println(y);
-                        current = frontier.pop();
-                        x = current.x;
-                        y = current.y;
-//                if (done) {
-//                    if(i < domain.size()) {
-//                        i++;
-//                        currValue = domain.get(i);
-//                        current = findSource(assignment, currValue, size);
-//                        Integer tempx = current.x;
-//                        Integer tempy = current.y;
-//                        current.charMap[x][y] = current.getValue();
-//                        current.parent = true;
-//                        frontier.push(current);
-//                        done = false;
+            while (!frontier.empty()) {
+                Character bleh;
+//                for(int j = 0; j < 5; j++){
+//                    for(int k = 0; k < 5; k++){
+//                        System.out.print(current.charMap[j][k]);
 //                    }
-//                } else {
-                        current.setMap(currValue);
-                        for (int j = 0; j < 5; j++) {
-                            for (int k = 0; k < 5; k++) {
-                                System.out.print(current.charMap[j][k]);
-                            }
-                            System.out.println();
+//                    System.out.println();
+//                }
+                System.out.println();
+                System.out.print(x);
+                System.out.println(y);
+                current = frontier.pop();
+                x = current.x;
+                y = current.y;
+                    current.setMap(currValue);
+                    for(int j = 0; j < 5; j++){
+                        for(int k = 0; k < 5; k++){
+                            System.out.print(current.charMap[j][k]);
                         }
                         System.out.println();
-                        current.visited.set(i, true);
-                        ArrayList<CSP> modAssignment = assignment.get(x);
+                    }
+                    System.out.println();
+                    current.visited.set(i, true);
+                    ArrayList<CSP> modAssignment = assignment.get(x);
+                    modAssignment.set(y, current);
+                    assignment.set(x, modAssignment);
+                    boolean u = false;
+                    boolean d = false;
+                    boolean r = false;
+                    boolean l = false;
+                    if (x - 1 >= 0) {
+                        CSP left = assignment.get(x - 1).get(y);
+
+                        if (isNewValid(currValue, left, current.charMap, assignment, size) ) {
+                            left.updateMap(current.charMap);
+                            frontier.push(left);
+                            l = true;
+                        }
+                        else if(left.initialValue && Character.toUpperCase(left.getValue()) == currValue && !left.parent){
+                            left.setValue(Character.toUpperCase(left.getValue()));
+                            done = true;
+                        }
+                        else{
+                            left.setMapValue(x, y, '_');
+                        }
+                    }
+                    if (y - 1 >= 0) {
+                        CSP up = assignment.get(x).get(y - 1);
+
+                        if (isNewValid(currValue, up, current.charMap, assignment,size) ) {
+                            up.updateMap(current.charMap);
+                            frontier.push(up);
+                            u = true;
+                        }
+                        else if(up.initialValue  && Character.toUpperCase(up.getValue()) == currValue &&!up.parent){
+                            up.setValue(Character.toUpperCase(up.getValue()));
+                            done = true;
+                        }
+                        else{
+                            up.setMapValue(x, y, '_');
+                        }
+                    }
+                    if (x + 1 < size) {
+                        CSP right = assignment.get(x + 1).get(y);
+
+                        if ( isNewValid(currValue, right, current.charMap,assignment,size) ) {
+                            right.updateMap(current.charMap);
+                            frontier.push(right);
+                            r = true;
+                        }
+                        else if(right.initialValue && Character.toUpperCase(right.getValue()) == currValue &&!right.parent){
+                            right.setValue(Character.toUpperCase(right.getValue()));
+                            done = true;
+                        }
+                        else{
+                            right.setMapValue(x, y, '_');
+                        }
+                    }
+                    if (y + 1 < size) {
+                        CSP down = assignment.get(x).get(y + 1);
+
+                        if (isNewValid(currValue, down, current.charMap,assignment,size) ) {
+                            down.updateMap(current.charMap);
+                            frontier.push(down);
+                            d = true;
+                        }
+                        else if(down.initialValue  && Character.toUpperCase(down.getValue()) == currValue &&!down.parent){
+                            down.setValue(Character.toUpperCase(down.getValue()));
+                            done = true;
+                        }
+                        else{
+                            down.setMapValue(x, y, '_');
+                        }
+                    }
+                    if (!u && !d && !l && !r) {
+                        current.setMap('_');
+                        current.visited.set(i, false);
+                        modAssignment = assignment.get(x);
                         modAssignment.set(y, current);
                         assignment.set(x, modAssignment);
-                        boolean u = false;
-                        boolean d = false;
-                        boolean r = false;
-                        boolean l = false;
-                        if (x - 1 >= 0) {
-                            CSP left = assignment.get(x - 1).get(y);
-
-                            if (isNewValid(currValue, left, current.charMap, assignment, size)) {
-                                left.updateMap(current.charMap);
-                                frontier.push(left);
-                                l = true;
-                            }
-//                        else if(left.initialValue && Character.toUpperCase(left.getValue()) == currValue && !left.parent){
-//                            left.setValue(Character.toUpperCase(left.getValue()));
-//                            done = true;
-//                        }
-                            else {
-                                left.setMapValue(x, y, '_');
-                            }
-                        }
-                        if (y - 1 >= 0) {
-                            CSP up = assignment.get(x).get(y - 1);
-
-                            if (isNewValid(currValue, up, current.charMap, assignment, size)) {
-                                up.updateMap(current.charMap);
-                                frontier.push(up);
-                                u = true;
-                            }
-//                        else if(up.initialValue  && Character.toUpperCase(up.getValue()) == currValue &&!up.parent){
-//                            up.setValue(Character.toUpperCase(up.getValue()));
-//                            done = true;
-//                        }
-                            else {
-                                up.setMapValue(x, y, '_');
-                            }
-                        }
-                        if (x + 1 < size) {
-                            CSP right = assignment.get(x + 1).get(y);
-
-                            if (isNewValid(currValue, right, current.charMap, assignment, size)) {
-                                right.updateMap(current.charMap);
-                                frontier.push(right);
-                                r = true;
-                            }
-//                        else if(right.initialValue && Character.toUpperCase(right.getValue()) == currValue &&!right.parent){
-//                            right.setValue(Character.toUpperCase(right.getValue()));
-//                            done = true;
-//                        }
-                            else {
-                                right.setMapValue(x, y, '_');
-                            }
-                        }
-                        if (y + 1 < size) {
-                            CSP down = assignment.get(x).get(y + 1);
-
-                            if (isNewValid(currValue, down, current.charMap, assignment, size)) {
-                                down.updateMap(current.charMap);
-                                frontier.push(down);
-                                d = true;
-                            }
-//                        else if(down.initialValue  && Character.toUpperCase(down.getValue()) == currValue &&!down.parent){
-//                            down.setValue(Character.toUpperCase(down.getValue()));
-//                            done = true;
-//                        }
-                            else {
-                                down.setMapValue(x, y, '_');
-                            }
-                        }
-                        if (!u && !d && !l && !r) {
-                            current.setMap('_');
-                            current.visited.set(i, false);
-                            modAssignment = assignment.get(x);
-                            modAssignment.set(y, current);
-                            assignment.set(x, modAssignment);
-                        }
-                        //}
                     }
-                    for(int g = 0; g<size; g++){
-                        for(int h=0; h<size; h++ ){
-                            CSP temp = assignment.get(g).get(h);
-                            temp.setValue(current.charMap[g][h]);
-                            temp.updateMap(current.charMap);
-                            assignment.get(h).set(h, temp);
-                        }
+                if (done) {
+                    if(i < domain.size()-1) {
+                        i++;
+                        CSP temp;
+                        currValue = domain.get(i);
+                        temp = findSource(assignment, currValue, size);
+                        Integer tempx = temp.x;
+                        Integer tempy = temp.y;
+                        temp.updateMap(current.charMap);
+                        temp.charMap[tempx][tempy] = temp.getValue();
+                        temp.parent = true;
+                        frontier.push(temp);
+                        done = false;
                     }
                 }
+                //}
+            }
 //            //CSP current = selectVariable(assignment);
 //            Integer x = current.x;
 //            Integer y = current.y;
@@ -345,7 +330,7 @@ public class Flow {
    }
 
     public boolean isNewValid(Character value, CSP current, Character[][] charMap, ArrayList<ArrayList<CSP>> assignment, Integer size) {
-        boolean retVal = true;
+        boolean retVal = false;
         boolean r = false;
         boolean l = false;
         boolean u = false;
@@ -410,57 +395,92 @@ public class Flow {
             }
             d = true;
         }
-
-        if(l && r && u && d) {
-            if(left== value && (right != value && up != value && down != value)) { return true; }
-            else if(right == value && (left != value && up != value && down != value)) { return true; }
-            else if(up == value && (right != value && left != value && down != value)) { return true; }
-            else if(down == value && (left != value && up != value && right != value)) { return true; }
-            else{ return false; }
-        }
-        else if(l && u && d) {
-            if(left == value && (up != value && down != value)) { return true; }
-            else if(up == value && (left != value && down != value)){ return true; }
-            else if(down == value && (left != value && up != value )){ return true; }
-            else{ return false; }
-        }
-        else if(r && u && d) {
-            if(right == value && (up != value && down != value)) { return true; }
-            else if(up == value && (right != value && down != value)) { return true; }
-            else if(down == value && (right != value && up != value )){ return true; }
-            else{ return false; }
-        }
-        else if(l && r && d) {
-            if(left == value && (right != value && down != value)) { return true; }
-            else if(right == value && (left != value && down != value)) { return true; }
-            else if(down == value && (left != value && right != value )){ return true; }
-            else{ return false; }
-        }
-        else if(l && r && u) {
-            if(left == value && (up != value && right != value)) { return true; }
-            else if(up == value && (left != value && right != value)) { return true; }
-            else if(right == value && (left != value && up != value )){ return true; }
-            else{ return false; }
-        }
-        else if(l && d) {
-            if(left == value && (down != value)) { return true; }
-            else if(down == value && (left != value)){ return true; }
-            else{ return false; }
-        }
-        else if(l && u) {
-            if(left == value && (up != value)) { return true; }
-            else if(up == value && (left != value)){ return true; }
-            else{ return false; }
-        }
-        else if(r && u) {
-            if(right == value && (up != value)) { return true; }
-            else if(up == value && (right != value)){ return true; }
-            else{ return false; }
-        }
-        else if(r && d) {
-            if(right == value && (down != value)) { return true; }
-            else if(down == value && (right != value)){ return true; }
-            else{ return false; }
+        if(charMap[x][y] == '_') {
+            if (l && r && u && d) {
+                if (left == value && (right != value && up != value && down != value)) {
+                    return true;
+                } else if (right == value && (left != value && up != value && down != value)) {
+                    return true;
+                } else if (up == value && (right != value && left != value && down != value)) {
+                    return true;
+                } else if (down == value && (left != value && up != value && right != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (l && u && d) {
+                if (left == value && (up != value && down != value)) {
+                    return true;
+                } else if (up == value && (left != value && down != value)) {
+                    return true;
+                } else if (down == value && (left != value && up != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (r && u && d) {
+                if (right == value && (up != value && down != value)) {
+                    return true;
+                } else if (up == value && (right != value && down != value)) {
+                    return true;
+                } else if (down == value && (right != value && up != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (l && r && d) {
+                if (left == value && (right != value && down != value)) {
+                    return true;
+                } else if (right == value && (left != value && down != value)) {
+                    return true;
+                } else if (down == value && (left != value && right != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (l && r && u) {
+                if (left == value && (up != value && right != value)) {
+                    return true;
+                } else if (up == value && (left != value && right != value)) {
+                    return true;
+                } else if (right == value && (left != value && up != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (l && d) {
+                if (left == value && (down != value)) {
+                    return true;
+                } else if (down == value && (left != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (l && u) {
+                if (left == value && (up != value)) {
+                    return true;
+                } else if (up == value && (left != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (r && u) {
+                if (right == value && (up != value)) {
+                    return true;
+                } else if (up == value && (right != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (r && d) {
+                if (right == value && (down != value)) {
+                    return true;
+                } else if (down == value && (right != value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
         return retVal;
     }

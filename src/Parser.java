@@ -76,7 +76,7 @@ public class Parser {
 
     public ArrayList<ArrayList<CSP>> getCSP(ArrayList<String> arg, Integer size){
         ArrayList<ArrayList<CSP>> retVal = new ArrayList<>();
-        Character[][] charMap = new Character[5][5];
+        Character[][] charMap = new Character[size][size];
         ArrayList<Character> domain = new ArrayList<>();
         for(int i=0; i<size; i++){
             ArrayList<CSP> arr = new ArrayList();

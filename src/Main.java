@@ -5,13 +5,14 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Parser s = new Parser();
-        ArrayList<String> list = s.Parse("input55.txt");
+        ArrayList<String> list = s.Parse("input77.txt");
+        Integer size = 7;
         ArrayList<ArrayList<CSP>> assignment = new ArrayList();
         Character[][] result;
-        assignment = s.getCSP(list, 5);
+        assignment = s.getCSP(list, size);
         CSP current = assignment.get(0).get(1);
         Flow m = new Flow();
-        result = m.BackTracking(assignment, 5, current.getDomain());
+        result = m.BackTracking(assignment, size, current.getDomain());
         Character bleh;
         System.out.println();
         System.out.println();
@@ -22,8 +23,8 @@ public class Main {
 //            }
 //            System.out.println();
 //        }
-        for(int i = 0; i < 5; i++){
-            for(int j = 0; j < 5; j++){
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
                System.out.print(result[i][j]);
             }
             System.out.println();

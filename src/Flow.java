@@ -97,7 +97,6 @@ public class Flow {
 //                    }
 //                    System.out.println();
 //                }
-
                 System.out.println();
                 System.out.print(x);
                 System.out.println(y);
@@ -106,8 +105,8 @@ public class Flow {
                 x = current.x;
                 y = current.y;
                     current.setMap(currValue);
-                    for(int j = 0; j < 5; j++){
-                        for(int k = 0; k < 5; k++){
+                    for(int j = 0; j < size; j++){
+                        for(int k = 0; k < size; k++){
                             System.out.print(current.charMap[j][k]);
                         }
                         System.out.println();
@@ -194,8 +193,9 @@ public class Flow {
                         assignment.set(x, modAssignment);
                     }
                 if (done) {
+                    i = current.i;
                     if(i < domain.size()-1) {
-                        i = current.i;
+
                         i++;
                         CSP temp;
                         currValue = domain.get(i);
@@ -211,6 +211,9 @@ public class Flow {
                     }
                 }
                 //}
+                if(isComplete(current.charMap)){
+                        frontier.clear();
+                }
             }
 //            //CSP current = selectVariable(assignment);
 //            Integer x = current.x;
@@ -259,6 +262,16 @@ public class Flow {
             }
         }
         return assignment.get(size-1).get(size-1);
+    }
+    public boolean isComplete(Character[][] arg){
+        for(Character[]i : arg){
+            for(Character j : i){
+                if(j == '_'){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     public boolean complete(ArrayList<ArrayList<CSP>> arg) {
         for(ArrayList<CSP> i : arg){

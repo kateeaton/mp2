@@ -29,9 +29,16 @@ public class Main {
         ArrayList<String> rList = s.Parse("input77.txt");
         ArrayList<ArrayList<CSP>> rAssignment = s.getCSP(rList, 7);
         CSP current = m.findSource(rAssignment, 'R', 7); //// r for 7
+        CSP dest = m.findSource(rAssignment, 'R', 7);
         current.parent = true;
-        rAssignment = m.recursive(rAssignment, 7, current.getDomain(), current, 0, 0);
+        m.node = 0;
+        Integer[] toInsert = new Integer[2];
+        toInsert[0] = dest.x;
+        toInsert[1] = dest.y;
+        m.destination = toInsert;
+        rAssignment = m.recursive(rAssignment, 7, current.getDomain(), current, 0);
         System.out.println();
+        System.out.println(m.node);
         System.out.println();
         for(ArrayList<CSP> i : rAssignment){
             for(CSP j : i){

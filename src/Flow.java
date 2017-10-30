@@ -1,12 +1,10 @@
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Stack;
+import java.util.*;
 
 public class Flow {
-
-    public ArrayList<ArrayList<CSP>> recursive(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain, CSP prev, int k, int node){
+    public Integer node;
+    public Integer[] destination = new Integer[2];
+    public ArrayList<ArrayList<CSP>> recursive(ArrayList<ArrayList<CSP>> assignment, Integer size, ArrayList<Character> domain, CSP prev, int k){
         if(complete(assignment)){
             return assignment;
         }
@@ -20,19 +18,28 @@ public class Flow {
         }
         //prev.parent = true;
         //CSP current = getVariable(assignment);
-        ArrayList<CSP> vars = getVars(assignment, prev);
+        Comparator<CSP> comparator = new CSPComparator();
+        PriorityQueue<CSP> vars;// = new PriorityQueue<CSP>(4, comparator);
+        vars = getVars(assignment, prev);
+        //ArrayList<CSP> vars = getVars(assignment, prev);
         boolean done = false;
         for(CSP current : vars ) {
-            node++;
+
             Integer x = current.x;
             Integer y = current.y;
             //for (Character value : current.getDomain()) {
             if(current.getValue() == '_') {
                 if (nearInitial(assignment, current, prev.getValue()) && isValid(prev.getValue(), current, assignment, size) ) {
+                    node++;
                     current.setValue(prev.getValue());
                     if (k < domain.size() - 1) {
                         CSP newPrev = findSource(assignment, domain.get(k), size);
-                        ArrayList<ArrayList<CSP>> result = recursive(assignment, size, domain, newPrev, k+1, node);
+                        CSP forMap = findDestination(assignment, domain.get(k), size);
+                        Integer[] toInsert = new Integer[2];
+                        toInsert[0] = forMap.x;
+                        toInsert[1] = forMap.y;
+                        destination = toInsert;
+                        ArrayList<ArrayList<CSP>> result = recursive(assignment, size, domain, newPrev, k+1);
                         if(complete(result)){
                             return result;
                         }
@@ -43,8 +50,9 @@ public class Flow {
                     }
                 }
                 else if (isValid(prev.getValue(), current, assignment, size) ) {
+                    node++;
                     current.setValue(prev.getValue());
-                    ArrayList<ArrayList<CSP>> result = recursive(assignment, size, domain, current, k, node);
+                    ArrayList<ArrayList<CSP>> result = recursive(assignment, size, domain, current, k);
                     if (complete(result)) {
                         return result;
                     } else {
@@ -66,7 +74,6 @@ public class Flow {
         }
 //        ArrayList<ArrayList<CSP>> failure = assignment;
 //        failure.get(0).get(0).setValue('_');
-        System.out.println(node);
         return assignment;
     }
     boolean nearInitial(ArrayList<ArrayList<CSP>> assignment, CSP current, Character value){
@@ -107,25 +114,33 @@ public class Flow {
 //        }
         return retVal;
     }
-    public ArrayList<CSP> getVars(ArrayList<ArrayList<CSP>> assignment, CSP prev){
+    public PriorityQueue<CSP> getVars(ArrayList<ArrayList<CSP>> assignment, CSP prev){
+        Comparator<CSP> comparator = new CSPComparator();
+        PriorityQueue<CSP> vars = new PriorityQueue<CSP>(4, comparator);
         Integer x = prev.x;
         Integer y = prev.y;
-        ArrayList<CSP> retVal = new ArrayList<>();
+        Character value = prev.getValue();
+        Integer[] length = destination;
+        //ArrayList<CSP> retVal = new ArrayList<>();
         if(y+1 < assignment.get(0).size()){
-            retVal.add(assignment.get(x).get(y+1));
+            assignment.get(x).get(y+1).distance = Math.abs(x-length[0]) + Math.abs(y+1-length[1]);
+            vars.add(assignment.get(x).get(y+1));
         }
         if(x+1 < assignment.get(0).size()){
-            retVal.add(assignment.get(x+1).get(y));
+            assignment.get(x+1).get(y).distance = Math.abs(x+1-length[0]) + Math.abs(y-length[1]);
+            vars.add(assignment.get(x+1).get(y));
         }
 
         if(x-1 >= 0){
-            retVal.add(assignment.get(x-1).get(y));
+            assignment.get(x-1).get(y).distance = Math.abs(x-1-length[0]) + Math.abs(y-length[1]);
+            vars.add(assignment.get(x-1).get(y));
         }
         if(y-1 >= 0){
-            retVal.add(assignment.get(x).get(y-1));
+            assignment.get(x).get(y-1).distance = Math.abs(x-length[0]) + Math.abs(y-1-length[1]);
+            vars.add(assignment.get(x).get(y-1));
         }
 
-        return retVal;
+        return vars;
     }
 
 
@@ -636,6 +651,17 @@ public class Flow {
         }
         return assignment.get(size-1).get(size-1);
     }
+    public CSP findDestination(ArrayList<ArrayList<CSP>> assignment, Character value, Integer size){
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                Character currValue = assignment.get(i).get(j).getValue();
+                if(currValue == value && !assignment.get(i).get(j).parent){
+                    return assignment.get(i).get(j);
+                }
+            }
+        }
+        return assignment.get(size-1).get(size-1);
+    }
     public boolean isComplete(Character[][] arg){
         for(Character[]i : arg){
             for(Character j : i){
@@ -996,7 +1022,121 @@ public class Flow {
         }
         return retVal;
     }
-
+    public boolean preIsValid(Character value, CSP current, ArrayList<ArrayList<CSP>> assignment, Integer size){
+        Integer x = current.x;
+        Integer y = current.y;
+        //boolean retVal = false;
+        boolean lval = false;
+        boolean rval = false;
+        boolean uval = false;
+        boolean dval = false;
+        Character temp = assignment.get(x).get(y).getValue();
+        if(temp != '_'){
+            return false;
+        }
+        assignment.get(x).get(y).setValue(value);
+        if(x-1 >= 0){
+            CSP left = assignment.get(x-1).get(y);
+            if(assignment.get(x-1).get(y).getValue() == '_') {
+                if(!isValid(value, left, assignment, size)){
+                    left.subDomain(value);
+                    if(left.getDomain().size() == 0){
+                        lval = false;
+                        left.addDomain(value);
+                    }
+                    else{
+                        lval = true;
+                    }
+                }
+                else{
+                    lval = true;
+                }
+            }
+            else{
+                lval = true;
+            }
+        }
+        else{
+            lval = true;
+        }
+        if(y-1 >= 0){
+            CSP up = assignment.get(x).get(y-1);
+            if(assignment.get(x).get(y-1).getValue() == '_') {
+                if(!isValid(value, up, assignment, size)){
+                    up.subDomain(value);
+                    if(up.getDomain().size() == 0){
+                        uval = false;
+                        up.addDomain(value);
+                    }
+                    else{
+                        uval = true;
+                    }
+                }
+                else{
+                    uval = true;
+                }
+            }
+            else{
+                uval = true;
+            }
+        }
+        else{
+            uval = true;
+        }
+        if(x+1 < size){
+            CSP right = assignment.get(x+1).get(y);
+            if(assignment.get(x+1).get(y).getValue() == '_') {
+                if(!isValid(value, right, assignment, size)){
+                    right.subDomain(value);
+                    if(right.getDomain().size() == 0){
+                        rval = false;
+                        right.addDomain(value);
+                    }
+                    else{
+                        rval = true;
+                    }
+                }
+                else{
+                    rval = true;
+                }
+            }
+            else{
+                rval = true;
+            }
+        }
+        else{
+            rval = true;
+        }
+        if(y+1 < size){
+            CSP down = assignment.get(x).get(y+1);
+            if(assignment.get(x).get(y+1).getValue() == '_') {
+                if(!isValid(value, down, assignment, size)){
+                    down.subDomain(value);
+                    if(down.getDomain().size() == 0){
+                        dval = false;
+                        down.addDomain(value);
+                    }
+                    else{
+                        dval = true;
+                    }
+                }
+                else{
+                    dval = true;
+                }
+            }
+            else{
+                dval = true;
+            }
+        }
+        else{
+            dval = true;
+        }
+        assignment.get(x-1).get(y).setValue(temp);
+        if(temp == Character.toLowerCase(value)){
+            rval = false;
+        }
+        return (rval & dval & uval & lval);
+    }
     public boolean isValid(Character value, CSP current, ArrayList<ArrayList<CSP>> assignment, Integer size) {
         boolean retVal = true;
         boolean r = false;

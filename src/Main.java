@@ -5,7 +5,7 @@ import java.util.ArrayList;
 //Changing the arguments of the parse function will change which files are solved
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        Parser s = new Parser();
+        /*Parser s = new Parser();
         ArrayList<String> list = s.Parse("input77.txt");
         Integer size = 7;
         ArrayList<ArrayList<CSP>> assignment = new ArrayList();
@@ -29,7 +29,7 @@ public class Main {
                System.out.print(result[i][j]);
             }
             System.out.println();
-        }
+        }*/
 //        ArrayList<String> list0 = s.Parse("mediumMaze.txt");
 //        ArrayList<String> list1 = s.Parse("mediumMaze.txt");
 //        ArrayList<String> list2 = s.Parse("mediumMaze.txt");

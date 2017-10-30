@@ -17,11 +17,39 @@ public class CSP {
         return value;
     }
     public ArrayList<Character> getDomain(){return domain;}
+    public CSP(){
+
+    }
+    public CSP(CSP toCopy){
+        this.parent = toCopy.parent;
+        this.value = toCopy.value;
+        this.x = toCopy.x;
+        this.y = toCopy.y;
+        this.i = toCopy.i;
+        this.initialValue = toCopy.initialValue;
+        this.distance = toCopy.distance;
+        this.parent = toCopy.parent;
+        for(int i=0; i<charMap.length; i++){
+            for(int j=0; j<charMap[i].length; j++){
+                this.charMap[i][j] = toCopy.charMap[i][j];
+            }
+        }
+        for(int i=0; i<domain.size(); i++){
+            this.domain.add(toCopy.getDomain().get(i));
+        }
+        for(int i=0; i<visited.size(); i++){
+            this.visited.add(toCopy.visited.get(i));
+        }
+    }
     public void addDomain(Character arg){
-        domain.add(arg);
+        if(!domain.contains(arg)){
+            domain.add(arg);
+        }
     }
     public void subDomain(Character arg){
-        domain.remove(arg);
+        if(domain.contains(arg)){
+            domain.remove(arg);
+        }
     }
     public Boolean isDomainEmpty(){
         return domain.isEmpty();
@@ -48,11 +76,20 @@ public class CSP {
 //    }
     //public void updateMap(Character inValue, Integer newX, Integer newY){charMap.get(newX).set(newY, inValue);}
     public void updateMap(Character[][] newMap){
-        for(int i=0; i<7; i++){
-            for(int j=0; j<7; j++){
+        for(int i=0; i<newMap.length; i++){
+            for(int j=0; j<newMap[i].length; j++){
                 charMap[i][j] = newMap[i][j];
             }
         }
+    }
+    public Character[][] getMap(){
+        Character[][] retVal = new Character[charMap.length][charMap[0].length];
+        for(int i=0; i<charMap.length; i++){
+            for(int j=0; j<charMap[i].length; i++){
+                retVal[i][j] = charMap[i][j];
+            }
+        }
+        return retVal;
     }
     public void setValue(Character arg){
         value = arg;
